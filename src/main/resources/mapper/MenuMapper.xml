@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ljs.logintest.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.ljs.logintest.pojo.Menu">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="visible" column="visible" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="perms" column="perms" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,menu_name,path,
+        component,visible,status,
+        perms
+    </sql>
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        select distinct m.perms
+        from menu_user mu
+        left join user u on mu.user_id = u.user_id
+        left join menu m on m.id = mu.menu_id
+        where u.user_id = #{userId}
+        and m.status = 0
+    </select>
+
+
+    <select id="selectMenuTreeByUserId" resultType="com.ljs.logintest.pojo.Menu">
+        select distinct m.id, m.menu_name, m.path, m.component,m.visible, m.status, ifnull(m.perms,'') as perms
+        from menu_user mu
+        left join user u on mu.user_id = u.user_id
+        left join menu m on m.id = mu.menu_id
+        where u.user_id = #{userId}
+        and m.status = 0
+
+    </select>
+
+    <!--    <select id="s" resultType="java.lang.String">-->
+<!--        select distinct m.perms-->
+<!--        from-->
+<!--            user_role ur-->
+<!--                left join role r on r.id = ur.role_id-->
+<!--                left join role_menu rm on r.id = rm.role_id-->
+<!--                left join menu m on m.id = rm.menu_id-->
+<!--        where-->
+<!--            user_id = #{userId}-->
+<!--          and r.status = 0-->
+<!--          and m.status = 0-->
+<!--    </select>-->
+</mapper>
